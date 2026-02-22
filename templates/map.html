@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EcoGuard AI - Intelligence Map</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #map {
+            height: 600px;
+            width: 95%;
+            margin: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .btn {
+            padding: 8px 15px;
+            margin: 10px;
+            background-color: #2c7be5;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+        .btn:hover {
+            background-color: #1a5edb;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🌍 EcoGuard AI - Invasive Species Intelligence Map</h1>
+
+<div id="map"></div>
+
+<br>
+<a href="/" class="btn">Upload New Report</a>
+<a href="/dashboard" class="btn">View Dashboard</a>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+<script>
+
+    var map = L.map('map').setView([13.0827, 80.2707], 5);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    var reports = {{ reports | tojson }};
+    var anomalies = {{ anomalies | tojson }};
+
+    var heatData = [];
+    var markerLayer = L.layerGroup().addTo(map);
+    var anomalyLayer = L.layerGroup().addTo(map);
+
+    // -------------------------------
+    // Plot Report Markers
+    // -------------------------------
+    reports.forEach(function(report) {
+
+        var lat = parseFloat(report[0]);
+        var lng = parseFloat(report[1]);
+        var species = report[2];
+
+        var markerColor = "green";
+
+        if (species === "Apple snail" || species === "Asian longhorned beetle") {
+            markerColor = "red";
+            heatData.push([lat, lng, 0.9]);
+        } 
+        else if (species === "Unknown Species") {
+            markerColor = "orange";
+            heatData.push([lat, lng, 0.5]);
+        }
+        else {
+            heatData.push([lat, lng, 0.2]);
+        }
+
+        var marker = L.circleMarker([lat, lng], {
+            color: markerColor,
+            radius: 8,
+            fillOpacity: 0.7
+        });
+
+        marker.bindPopup("<b>Species:</b> " + species);
+        markerLayer.addLayer(marker);
+    });
+
+    // -------------------------------
+    // Heatmap Layer
+    // -------------------------------
+    var heatLayer = L.heatLayer(heatData, {
+        radius: 25,
+        blur: 15,
+        maxZoom: 10
+    });
+
+    // -------------------------------
+    // Satellite Anomaly Zones
+    // -------------------------------
+    anomalies.forEach(function(anomaly) {
+
+        var lat = parseFloat(anomaly[0]);
+        var lng = parseFloat(anomaly[1]);
+        var radius = anomaly[2];
+        var description = anomaly[3];
+
+        var circle = L.circle([lat, lng], {
+            color: 'red',
+            fillColor: '#ff0000',
+            fillOpacity: 0.3,
+            radius: radius
+        });
+
+        circle.bindPopup("<b>Satellite Anomaly:</b><br>" + description);
+        anomalyLayer.addLayer(circle);
+    });
+
+    // -------------------------------
+    // Layer Control Toggle
+    // -------------------------------
+    var overlayMaps = {
+        "Report Markers": markerLayer,
+        "Heatmap View": heatLayer,
+        "Satellite Anomaly Zones": anomalyLayer
+    };
+
+    L.control.layers(null, overlayMaps).addTo(map);
+
+</script>
+
+</body>
+</html>

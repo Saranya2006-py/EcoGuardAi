@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EcoGuard AI - Detection Result</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to right, #f4f7f9, #e2f5ec);
+}
+
+/* NAVBAR */
+.navbar {
+    background: #0f172a;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.navbar a {
+    color: #cbd5e1;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    color: #22c55e;
+}
+
+/* CONTAINER */
+.container {
+    width: 85%;
+    margin: 40px auto;
+    text-align: center;
+}
+
+/* RESULT CARD */
+.result-card {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    max-width: 700px;
+    margin: auto;
+}
+
+/* IMAGE */
+.result-card img {
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* PREDICTION TITLE */
+.prediction {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+/* CONFIDENCE BAR */
+.confidence-bar {
+    background: #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 15px auto;
+    width: 80%;
+    height: 20px;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: #16a34a;
+    text-align: right;
+    padding-right: 8px;
+    color: white;
+    font-size: 12px;
+    line-height: 20px;
+}
+
+/* RISK STYLES */
+.low { color: #15803d; font-weight: bold; }
+.moderate { color: #d97706; font-weight: bold; }
+.high { color: #dc2626; font-weight: bold; }
+.critical { color: #7f1d1d; font-weight: bold; }
+
+/* INFO BOX */
+.info-box {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 25px;
+    text-align: left;
+}
+
+/* BUTTON */
+.btn {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 10px 25px;
+    background: #16a34a;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn:hover {
+    background: #15803d;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>🌿 EcoGuard AI - Detection Report</h2>
+    <div>
+        <a href="/">User Portal</a>
+        
+        
+    </div>
+</div>
+
+<div class="container">
+
+<div class="result-card">
+
+    <h1>AI Detection Result</h1>
+
+    <img src="{{ url_for('static', filename=image) }}" width="300">
+
+    <div class="prediction">
+        Detected Species: <strong>{{ prediction }}</strong>
+    </div>
+
+    <p><strong>Confidence:</strong> {{ confidence }}%</p>
+
+    <!-- Confidence Bar -->
+    <div class="confidence-bar">
+        <div class="confidence-fill" style="width: {{ confidence }}%;">
+            {{ confidence }}%
+        </div>
+    </div>
+
+    <!-- Risk Level Styling -->
+    {% if risk == "Low" %}
+        <p class="low">Risk Level: {{ risk }}</p>
+    {% elif risk == "Moderate" %}
+        <p class="moderate">Risk Level: {{ risk }}</p>
+    {% elif risk == "High" %}
+        <p class="high">Risk Level: {{ risk }}</p>
+    {% else %}
+        <p class="critical">Risk Level: {{ risk }}</p>
+    {% endif %}
+
+    <div class="info-box">
+        <h3>Location Details</h3>
+        <p><strong>Latitude:</strong> {{ latitude }}</p>
+        <p><strong>Longitude:</strong> {{ longitude }}</p>
+        <p><strong>Address:</strong> {{ address }}</p>
+    </div>
+
+    <a href="/" class="btn">Upload Another Image</a>
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Review</title>
+<style>
+body {
+    font-family: 'Segoe UI';
+    background: #f4f7f9;
+    margin: 0;
+}
+.container {
+    width: 90%;
+    margin: 30px auto;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+th {
+    background: #0f172a;
+    color: white;
+    padding: 12px;
+}
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+img {
+    border-radius: 8px;
+}
+.action-buttons {
+    display: flex;
+    gap: 5px; /* space between A and R */
+}
+a {
+    display: inline-block;
+    width: 30px;          /* square buttons */
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 0;
+}
+.approve {
+    background: #16a34a;
+}
+.reject {
+    background: #dc2626;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1>Pending Reports</h1>
+
+<table>
+<tr>
+<th>ID</th>
+<th>Image</th>
+<th>Location</th>
+<th>Prediction</th>
+<th>Date</th>
+<th>Actions</th>
+</tr>
+
+{% for report in reports %}
+<tr>
+<td>{{ report[0] }}</td>
+<td><img src="/static/{{ report[1] }}" width="80"></td>
+<td>{{ report[4] }}</td>
+<td>{{ report[5] }}</td>
+<td>{{ report[6] }}</td>
+<td>
+<div class="action-buttons">
+    <a href="/admin/approve/{{ report[0] }}" class="approve">A</a>
+    <a href="/admin/reject/{{ report[0] }}" class="reject">R</a>
+</div>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+</div>
+</body>
+</html>

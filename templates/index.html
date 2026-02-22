@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EcoGuard AI - User Portal</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+<style>
+body {
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to right, #f4f7f9, #e6f4ea);
+}
+
+/* NAVBAR */
+.navbar {
+    background:#0f172a;
+    padding:15px 40px;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.navbar h2 {
+    margin:0;
+}
+
+.navbar a {
+    color:#cbd5e1;
+    text-decoration:none;
+    font-weight:500;
+}
+
+.navbar a:hover {
+    color:#22c55e;
+}
+
+/* CONTAINER */
+.container {
+    width:85%;
+    margin:40px auto;
+}
+
+/* CARD */
+.card {
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 15px 35px rgba(0,0,0,0.08);
+    margin-bottom:30px;
+}
+
+/* CUSTOM FILE UPLOAD */
+.file-upload {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.file-upload input[type="file"] {
+    display: none;
+}
+
+.file-label {
+    display: block;
+    padding: 15px;
+    border: 2px dashed #16a34a;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    background: #f0fdf4;
+    color: #166534;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.file-label:hover {
+    background: #dcfce7;
+}
+
+/* BUTTONS */
+button {
+    padding:12px 25px;
+    border:none;
+    border-radius:10px;
+    background:#16a34a;
+    color:white;
+    cursor:pointer;
+    font-weight:500;
+    transition:0.3s;
+}
+
+button:hover {
+    background:#15803d;
+}
+
+button:disabled {
+    background:gray;
+    cursor:not-allowed;
+}
+
+/* MAP */
+#map {
+    height:450px;
+    border-radius:20px;
+    margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>🌿 EcoGuard AI - User Portal</h2>
+    <a href="/dashboard">Admin Panel</a>
+</div>
+
+<div class="container">
+
+<div class="card">
+<h2>Report Species Detection</h2>
+
+<form action="/upload" method="post" enctype="multipart/form-data">
+
+<div class="file-upload">
+    <label for="imageUpload" class="file-label">
+        📁 Click to Upload Species Image
+    </label>
+    <input type="file" name="image" id="imageUpload" required>
+</div>
+
+<br><br>
+
+<input type="hidden" name="latitude" id="latitude" required>
+<input type="hidden" name="longitude" id="longitude" required>
+<input type="hidden" name="address" id="address" required>
+
+<button type="submit" id="analyzeBtn" disabled>
+    🔍 Analyze Detection
+</button>
+</form>
+
+<br>
+<button onclick="getLocation()">📍 Use My Current Location</button>
+</div>
+
+<div class="card">
+<h3>Select Location on Map</h3>
+<div id="map"></div>
+</div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+<script>
+// Show selected file name
+document.getElementById("imageUpload").addEventListener("change", function(){
+    const fileName = this.files[0]?.name;
+    if(fileName){
+        document.querySelector(".file-label").innerText = "✅ " + fileName;
+    }
+});
+
+// YOUR ORIGINAL JS UNCHANGED
+var map = L.map('map').setView([13.0827, 80.2707], 5);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+ attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+L.Control.geocoder().addTo(map);
+
+var marker;
+
+function getAddress(lat, lng) {
+fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+.then(response => response.json())
+.then(data => {
+document.getElementById("address").value = data.display_name;
+});
+}
+
+map.on('click', function(e) {
+if (marker) { map.removeLayer(marker); }
+marker = L.marker(e.latlng).addTo(map);
+
+document.getElementById("latitude").value = e.latlng.lat;
+document.getElementById("longitude").value = e.latlng.lng;
+getAddress(e.latlng.lat, e.latlng.lng);
+
+document.getElementById("analyzeBtn").disabled = false;
+});
+
+function getLocation() {
+if (navigator.geolocation) {
+navigator.geolocation.getCurrentPosition(function(position) {
+
+var lat = position.coords.latitude;
+var lng = position.coords.longitude;
+
+if (marker) { map.removeLayer(marker); }
+
+marker = L.marker([lat, lng]).addTo(map);
+map.setView([lat, lng], 13);
+
+document.getElementById("latitude").value = lat;
+document.getElementById("longitude").value = lng;
+
+getAddress(lat, lng);
+
+document.getElementById("analyzeBtn").disabled = false;
+});
+}
+}
+</script>
+
+</body>
+</html>

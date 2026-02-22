@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EcoGuard AI - Alerts Dashboard</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f4f7f9;
+}
+
+/* NAVBAR */
+.navbar {
+    background: #0f172a;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.navbar a {
+    color: #cbd5e1;
+    margin-left: 20px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.navbar a:hover {
+    color: #22c55e;
+}
+
+/* CONTAINER */
+.container {
+    width: 90%;
+    margin: 30px auto;
+}
+
+/* CARD */
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #0f172a;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+tr:hover {
+    background-color: #f1f5f9;
+}
+
+/* Severity Colors */
+.low {
+    color: green;
+    font-weight: bold;
+}
+
+.moderate {
+    color: orange;
+    font-weight: bold;
+}
+
+.high {
+    color: red;
+    font-weight: bold;
+}
+
+.critical {
+    color: darkred;
+    font-weight: bold;
+}
+
+/* STATUS BADGE */
+.status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.active {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.resolved {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+/* SOLUTION BUTTON */
+.solution-btn {
+    padding: 6px 12px;
+    background-color: #22c55e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.solution-btn:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 50%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>🚨 EcoGuard AI - Alerts</h2>
+</div>
+
+<div class="container">
+
+<h1>Alerts Dashboard</h1>
+
+<div class="card">
+<table>
+<tr>
+    <th>ID</th>
+    <th>Latitude</th>
+    <th>Longitude</th>
+    <th>Severity</th>
+    <th>Message</th>
+    <th>Created At</th>
+    <th>Status</th>
+    <th>Solution</th>
+</tr>
+
+{% for alert in alerts %}
+<tr>
+    <td>{{ alert.id }}</td>
+    <td>{{ alert.latitude }}</td>
+    <td>{{ alert.longitude }}</td>
+
+    <!-- Dynamic Severity Styling -->
+    <td class="{{ alert.severity|lower }}">
+        {{ alert.severity }}
+    </td>
+
+    <td>{{ alert.message }}</td>
+    <td>{{ alert.created_at }}</td>
+
+    <!-- Status Badge -->
+    <td>
+        <span class="status {{ alert.status|lower }}">
+            {{ alert.status }}
+        </span>
+    </td>
+
+    <!-- Solution Button -->
+    <td>
+        <button class="solution-btn" 
+                {% if not alert.is_invasive %} disabled {% endif %}
+                onclick="openModal('{{ alert.solution }}')">
+            {% if alert.is_invasive %} View Solution {% else %} Native {% endif %}
+        </button>
+    </td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+</div>
+
+<!-- Modal -->
+<div id="solutionModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <p id="solutionText"></p>
+  </div>
+</div>
+
+<script>
+function openModal(solution) {
+    document.getElementById("solutionText").innerText = solution;
+    document.getElementById("solutionModal").style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("solutionModal").style.display = "none";
+}
+
+// Close modal on clicking outside
+window.onclick = function(event) {
+    var modal = document.getElementById("solutionModal");
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+
+</body>
+</html>

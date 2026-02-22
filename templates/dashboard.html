@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EcoGuard AI - Admin Dashboard</title>
+
+<style>
+body {
+    margin:0;
+    font-family:'Segoe UI';
+    background:#f4f7f9;
+}
+
+.navbar {
+    background:#0f172a;
+    padding:15px 30px;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+}
+
+.navbar a {
+    color:#cbd5e1;
+    margin-left:20px;
+    text-decoration:none;
+}
+
+.container {
+    width:90%;
+    margin:30px auto;
+}
+
+.grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.card {
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+    text-align:center;
+}
+
+.card h2 {
+    color:#16a34a;
+    font-size:32px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+<h2>🛠 EcoGuard AI - Admin</h2>
+<div>
+<a href="/">User Portal</a>
+<a href="/map">Map</a>
+<a href="/alerts">Alerts</a>
+<a href="/admin/review">Review</a>
+</div>
+</div>
+
+<div class="container">
+
+<h1>Admin Dashboard</h1>
+
+<div class="grid">
+
+<div class="card">
+<h3>Total Reports</h3>
+<h2>{{ total }}</h2>
+</div>
+
+<div class="card">
+<h3>Total Invasive</h3>
+<h2>{{ invasive }}</h2>
+</div>
+
+<div class="card">
+<h3>Total Native</h3>
+<h2>{{ native }}</h2>
+</div>
+
+<div class="card">
+<h3>Active Alerts</h3>
+<h2>{{ active_alerts }}</h2>
+</div>
+
+<div class="card">
+<h3>Pending Verification</h3>
+<h2>{{ unverified_reports }}</h2>
+</div>
+
+</div>
+
+<br>
+
+<div class="card">
+<h3>Spread Trend</h3>
+<p>This Week: {{ current_week }}</p>
+<p>Last Week: {{ previous_week }}</p>
+<h2>{{ trend }}</h2>
+</div>
+
+{% if last_report_id %}
+<br>
+<div class="card">
+<h3>Last Detection</h3>
+<a href="/result/{{ last_report_id }}" style="color:#16a34a;font-weight:bold;">
+View Detection
+</a>
+</div>
+{% endif %}
+
+</div>
+</body>
+</html>
