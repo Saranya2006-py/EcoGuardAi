@@ -1,0 +1,1 @@
+Invasive species are spreading rapidly, causing severe ecological and economic damage. Traditional field surveys detect infestations too late, making containment difficult. Citizens encounter unusual plants and animals daily, but there is no structured system to convert these sightings into actionable intelligence.
